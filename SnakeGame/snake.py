@@ -7,21 +7,18 @@ class Snake:
         self.heading = 0
         self.collision = False
 
+    def clear(self):
+        self.segments[3:].clear()
+
     def create_snake(self):
         for _ in range(0, 3):
-            self.segments.append(self.create_segment())
+            segment = Segment()
+            self.segments.append(segment)
 
         for i in range(len(self.segments)):
             if i > 0:
                 self.segments[i].goto(self.segments[i - 1].xcor() - 20, self.segments[i - 1].ycor())
             self.segments[0].goto(0, 0)
-
-    def create_segment(self):
-        s = Turtle('square')
-        s.penup()
-        s.speed(1)
-        s.color('white')
-        return s
 
     def move(self):
         for s in range(len(self.segments) - 1, 0, -1):
@@ -52,7 +49,8 @@ class Snake:
             self.set_heading(0)
 
     def grow(self):
-        self.segments.append(self.create_segment())
+        segment = Segment()
+        self.segments.append(segment)
         repositionx = 0
         repositiony = 0
         if self.heading == 0:
@@ -70,3 +68,16 @@ class Snake:
             if self.segments[0].distance(self.segments[s]) <= 10:
                 return True
         return None
+
+
+class Segment(Turtle):
+
+    def __init__(self):
+        super().__init__()
+        self.shape('square')
+        self.penup()
+        self.speed(1)
+        self.color('white')
+
+    def clear(self):
+        self.goto(-500,-500)

@@ -23,23 +23,39 @@ screen.onkey(fun=snake.right, key='Right')
 food = Food()
 score = Score()
 
-while game_on:
-    screen.update()
-    time.sleep(0.3)
-    snake.move()
+def game():
+    global game_on
 
-    if snake.segments[0].distance(food) < 15:
-        food.move()
-        snake.grow()
-        score.count += 1
-        score.update_score()
+    while game_on:
+        screen.update()
+        time.sleep(0.3)
+        snake.move()
 
-    if snake.tail_collision():
-        game_on = False
+        if snake.segments[0].distance(food) < 15:
+            food.move()
+            snake.grow()
+            score.count += 1
+            score.update_score()
 
-    if abs(snake.segments[0].xcor()) == screen.window_width()/2 or abs(snake.segments[0].ycor()) == screen.window_height()/2:
-        game_on = False
+        if snake.tail_collision():
+            game_on = False
 
-messagebox.showinfo(title='Game Over!', message=f'Snake length: {len(snake.segments)}')
+        if abs(snake.segments[0].xcor()) == screen.window_width()/2 or abs(snake.segments[0].ycor()) == screen.window_height()/2:
+            game_on = False
+            score.check_highest_score()
+            messagebox.showinfo(title='Game Over!', message=f'Snake length: {len(snake.segments)}')
+            if messagebox.OK:
+                for s in snake.segments[3:]:
+                    s.clear()
+                snake.segments = snake.segments[:3]
+                snake.segments[0].goto(0, 0)
+                score.check_highest_score()
+                score.count = 0
+                score.update_score()
+
+                game_on = True
+                game()
+
+game()
 
 screen.exitonclick()
